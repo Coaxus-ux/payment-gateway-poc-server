@@ -11,12 +11,12 @@ export class ProductEntity {
   @Column({ type: 'text', nullable: true })
   description!: string | null;
 
-  @Column({ type: 'integer' })
+  @Column({ name: 'price_amount', type: 'integer' })
   priceAmount!: number;
 
   @Column({ type: 'varchar', length: 10 })
   currency!: string;
 
-  @Column({ type: 'integer' })
+  @Column({ name: 'stock_units', type: 'integer' })
   stockUnits!: number;
 }

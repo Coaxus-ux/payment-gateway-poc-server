@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Product } from '@/domain/product/product';
 import { Result } from '@/shared/result';
+import { ApplicationError } from '@/application/errors';
 import { ProductRepository } from '@/application/ports/product-repository';
 import { PRODUCT_REPOSITORY } from '@/application/tokens';
 
@@ -11,8 +12,8 @@ export class ListProductsUseCase {
     private readonly productRepository: ProductRepository,
   ) {}
 
-  async execute() {
+  async execute(): Promise<Result<Product[], ApplicationError>> {
     const products = await this.productRepository.findAll();
-    return Result.ok<Product[]>(products);
+    return Result.ok(products);
   }
 }

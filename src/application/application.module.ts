@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { DatabaseModule } from '@/infrastructure/database/database.module';
+import { PaymentModule } from '@/infrastructure/payment/payment.module';
 import { CreateTransactionUseCase } from './use-cases/create-transaction.usecase';
 import { GetCustomerUseCase } from './use-cases/get-customer.usecase';
 import { GetDeliveryUseCase } from './use-cases/get-delivery.usecase';
@@ -9,6 +11,7 @@ import { PayTransactionUseCase } from './use-cases/pay-transaction.usecase';
 import { UpdateDeliveryUseCase } from './use-cases/update-delivery.usecase';
 
 @Module({
+  imports: [DatabaseModule, PaymentModule],
   providers: [
     ListProductsUseCase,
     GetProductUseCase,

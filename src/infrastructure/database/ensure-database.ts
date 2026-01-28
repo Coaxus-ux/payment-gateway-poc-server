@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
 import { Client } from 'pg';
 
 async function ensureDatabase() {
@@ -26,7 +27,7 @@ async function ensureDatabase() {
   await client.end();
 }
 
-ensureDatabase().catch((error) => {
+ensureDatabase().catch((error: unknown) => {
   console.error('Database bootstrap failed', error);
   process.exit(1);
 });

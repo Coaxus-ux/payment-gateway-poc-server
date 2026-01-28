@@ -75,13 +75,12 @@ export class PayTransactionUseCase {
       });
     }
 
-    const success = await this.transactionRepository.markSuccessAndDecrementStock(
-      {
+    const success =
+      await this.transactionRepository.markSuccessAndDecrementStock({
         id: transaction.id,
         providerRef: payment.providerRef,
         quantity: 1,
-      },
-    );
+      });
 
     if (success.outcome === 'NOT_FOUND') {
       return Result.err<ApplicationError>({ type: 'TRANSACTION_NOT_FOUND' });

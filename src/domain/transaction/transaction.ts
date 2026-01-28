@@ -25,7 +25,12 @@ export class Transaction {
     currency: string;
     productSnapshot: ProductSnapshot;
   }) {
-    if (!props.id || !props.productId || !props.customerId || !props.deliveryId) {
+    if (
+      !props.id ||
+      !props.productId ||
+      !props.customerId ||
+      !props.deliveryId
+    ) {
       return Result.err('TRANSACTION_INVALID');
     }
     if (!Number.isInteger(props.amount) || props.amount <= 0) {

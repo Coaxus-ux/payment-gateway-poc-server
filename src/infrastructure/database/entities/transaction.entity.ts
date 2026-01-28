@@ -32,10 +32,20 @@ export class TransactionEntity {
   @Column({ type: 'varchar', length: 20 })
   status!: TransactionStatus;
 
-  @Column({ type: 'varchar', length: 200, nullable: true })
+  @Column({
+    name: 'provider_ref',
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
   providerRef!: string | null;
 
-  @Column({ type: 'varchar', length: 200, nullable: true })
+  @Column({
+    name: 'failure_reason',
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
   failureReason!: string | null;
 
   @Column({ type: 'integer' })
@@ -47,16 +57,16 @@ export class TransactionEntity {
   @Column({ type: 'integer' })
   quantity!: number;
 
-  @Column({ type: 'varchar', length: 200 })
+  @Column({ name: 'product_name', type: 'varchar', length: 200 })
   productName!: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'product_description', type: 'text', nullable: true })
   productDescription!: string | null;
 
-  @Column({ type: 'integer' })
+  @Column({ name: 'product_price_amount', type: 'integer' })
   productPriceAmount!: number;
 
-  @Column({ type: 'varchar', length: 10 })
+  @Column({ name: 'product_currency', type: 'varchar', length: 10 })
   productCurrency!: string;
 
   @VersionColumn()

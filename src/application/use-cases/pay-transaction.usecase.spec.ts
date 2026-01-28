@@ -1,6 +1,7 @@
 import { PayTransactionUseCase } from './pay-transaction.usecase';
 import { Transaction } from '@/domain/transaction/transaction';
 import { TransactionStatus } from '@/domain/transaction/transaction-status';
+import { Customer } from '@/domain/customer/customer';
 
 describe('PayTransactionUseCase', () => {
   const baseTx = () => {
@@ -35,25 +36,27 @@ describe('PayTransactionUseCase', () => {
 
     const useCase = new PayTransactionUseCase(
       {
-        findById: async () => existing,
-        create: async () => existing,
-        markFailedIfPending: async () => existing,
-        markSuccessAndDecrementStock: async () => ({
-          transaction: existing,
-          stockAdjusted: false,
-          outcome: 'ALREADY_FINAL',
-        }),
+        findById: () => Promise.resolve(existing),
+        create: () => Promise.resolve(existing),
+        markFailedIfPending: () => Promise.resolve(existing),
+        markSuccessAndDecrementStock: () =>
+          Promise.resolve({
+            transaction: existing,
+            stockAdjusted: false,
+            outcome: 'ALREADY_FINAL' as const,
+          }),
       },
       {
-        findById: async () => null,
-        findByEmail: async () => null,
-        create: async () => existing as any,
+        findById: () => Promise.resolve(null),
+        findByEmail: () => Promise.resolve(null),
+        create: () => Promise.resolve(existing as unknown as Customer),
       },
       {
-        charge: async () => ({
-          status: 'SUCCESS',
-          providerRef: 'ref',
-        }),
+        charge: () =>
+          Promise.resolve({
+            status: 'SUCCESS' as const,
+            providerRef: 'ref',
+          }),
       },
     );
 
@@ -84,35 +87,39 @@ describe('PayTransactionUseCase', () => {
 
     const useCase = new PayTransactionUseCase(
       {
-        findById: async () => pending,
-        create: async () => pending,
-        markFailedIfPending: async () => pending,
-        markSuccessAndDecrementStock: async () => ({
-          transaction: successTx,
-          stockAdjusted: true,
-          outcome: 'SUCCESS',
-        }),
+        findById: () => Promise.resolve(pending),
+        create: () => Promise.resolve(pending),
+        markFailedIfPending: () => Promise.resolve(pending),
+        markSuccessAndDecrementStock: () =>
+          Promise.resolve({
+            transaction: successTx,
+            stockAdjusted: true,
+            outcome: 'SUCCESS' as const,
+          }),
       },
       {
-        findById: async () => ({
-          id: 'cust-1',
-          email: 'a@b.com',
-          fullName: 'Name',
-          phone: null,
-        }),
-        findByEmail: async () => null,
-        create: async () => ({
-          id: 'cust-1',
-          email: 'a@b.com',
-          fullName: 'Name',
-          phone: null,
-        }),
+        findById: () =>
+          Promise.resolve({
+            id: 'cust-1',
+            email: 'a@b.com',
+            fullName: 'Name',
+            phone: null,
+          }),
+        findByEmail: () => Promise.resolve(null),
+        create: () =>
+          Promise.resolve({
+            id: 'cust-1',
+            email: 'a@b.com',
+            fullName: 'Name',
+            phone: null,
+          }),
       },
       {
-        charge: async () => ({
-          status: 'SUCCESS',
-          providerRef: 'ref',
-        }),
+        charge: () =>
+          Promise.resolve({
+            status: 'SUCCESS' as const,
+            providerRef: 'ref',
+          }),
       },
     );
 

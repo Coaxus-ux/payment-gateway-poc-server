@@ -20,7 +20,10 @@ export function mapErrorToHttp(error: ApplicationError): never {
     case 'AMOUNT_MISMATCH':
       throw new BadRequestException({ error: error.type });
     case 'PAYMENT_FAILED':
-      throw new BadRequestException({ error: error.type, reason: error.reason });
+      throw new BadRequestException({
+        error: error.type,
+        reason: error.reason,
+      });
     case 'TRANSACTION_FINALIZED':
       throw new ConflictException({ error: error.type });
     default:

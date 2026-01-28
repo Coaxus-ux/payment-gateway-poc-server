@@ -18,20 +18,22 @@ export function ExpiryDate(
       options: validationOptions,
       validator: {
         validate(_: unknown, args: ValidationArguments) {
-          const [monthProp, yearProp] = args.constraints;
-          const month = (args.object as any)[monthProp];
-          const year = (args.object as any)[yearProp];
+          const [monthProp, yearProp] = args.constraints as [string, string];
+          const obj = args.object as Record<string, unknown>;
+          const month = obj[monthProp];
+          const year = obj[yearProp];
 
           if (!Number.isInteger(month) || !Number.isInteger(year)) {
             return false;
           }
-          if (month < 1 || month > 12) {
+          if ((month as number) < 1 || (month as number) > 12) {
             return false;
           }
 
-          const fullYear = year < 100 ? 2000 + year : year;
+          const fullYear =
+            (year as number) < 100 ? 2000 + (year as number) : (year as number);
           const now = new Date();
-          const expiry = new Date(fullYear, month, 0, 23, 59, 59);
+          const expiry = new Date(fullYear, month as number, 0, 23, 59, 59);
           return expiry >= now;
         },
         defaultMessage(args: ValidationArguments) {

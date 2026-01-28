@@ -9,7 +9,7 @@ export class CustomerEntity {
   @Column({ type: 'varchar', length: 200 })
   email!: string;
 
-  @Column({ type: 'varchar', length: 200 })
+  @Column({ name: 'full_name', type: 'varchar', length: 200 })
   fullName!: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
