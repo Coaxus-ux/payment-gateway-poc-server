@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { GetDeliveryUseCase } from '../../application/use-cases/get-delivery.usecase';
-import { UpdateDeliveryUseCase } from '../../application/use-cases/update-delivery.usecase';
-import { UpdateDeliveryDto } from '../dto/update-delivery.dto';
-import { mapErrorToHttp } from '../http/error-mapper';
+import { GetDeliveryUseCase } from '@/application/use-cases/get-delivery.usecase';
+import { UpdateDeliveryUseCase } from '@/application/use-cases/update-delivery.usecase';
+import { UpdateDeliveryDto } from '@/presentation/dto/update-delivery.dto';
+import { mapErrorToHttp } from '@/presentation/http/error-mapper';
 
 @ApiTags('deliveries')
 @Controller('deliveries')

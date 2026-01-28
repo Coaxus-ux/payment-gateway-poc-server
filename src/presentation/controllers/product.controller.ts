@@ -1,8 +1,8 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { GetProductUseCase } from '../../application/use-cases/get-product.usecase';
-import { ListProductsUseCase } from '../../application/use-cases/list-products.usecase';
-import { mapErrorToHttp } from '../http/error-mapper';
+import { GetProductUseCase } from '@/application/use-cases/get-product.usecase';
+import { ListProductsUseCase } from '@/application/use-cases/list-products.usecase';
+import { mapErrorToHttp } from '@/presentation/http/error-mapper';
 
 @ApiTags('products')
 @Controller('products')

@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import { Customer } from '../../domain/customer/customer';
-import { Delivery } from '../../domain/delivery/delivery';
-import { Transaction } from '../../domain/transaction/transaction';
-import { Result } from '../../shared/result';
-import { ApplicationError } from '../errors';
-import { CheckoutRepository } from '../ports/checkout-repository';
-import { ProductRepository } from '../ports/product-repository';
-import { CHECKOUT_REPOSITORY, PRODUCT_REPOSITORY } from '../tokens';
+import { Customer } from '@/domain/customer/customer';
+import { Delivery } from '@/domain/delivery/delivery';
+import { Transaction } from '@/domain/transaction/transaction';
+import { Result } from '@/shared/result';
+import { ApplicationError } from '@/application/errors';
+import { CheckoutRepository } from '@/application/ports/checkout-repository';
+import { ProductRepository } from '@/application/ports/product-repository';
+import { CHECKOUT_REPOSITORY, PRODUCT_REPOSITORY } from '@/application/tokens';
 
 export type CreateTransactionInput = {
   productId: string;

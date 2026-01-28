@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CustomerRepository } from '../../../application/ports/customer-repository';
-import { Customer } from '../../../domain/customer/customer';
-import { CustomerEntity } from '../entities/customer.entity';
-import { CustomerMapper } from '../mappers/customer.mapper';
+import { CustomerRepository } from '@/application/ports/customer-repository';
+import { Customer } from '@/domain/customer/customer';
+import { CustomerEntity } from '@/infrastructure/database/entities/customer.entity';
+import { CustomerMapper } from '@/infrastructure/database/mappers/customer.mapper';
 
 @Injectable()
 export class CustomerRepositoryTypeOrm implements CustomerRepository {

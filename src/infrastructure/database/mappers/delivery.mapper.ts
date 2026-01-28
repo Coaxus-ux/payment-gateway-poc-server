@@ -1,5 +1,5 @@
-import { Delivery } from '../../../domain/delivery/delivery';
-import { DeliveryEntity } from '../entities/delivery.entity';
+import { Delivery } from '@/domain/delivery/delivery';
+import { DeliveryEntity } from '@/infrastructure/database/entities/delivery.entity';
 
 export const DeliveryMapper = {
   toDomain(entity: DeliveryEntity): Delivery {

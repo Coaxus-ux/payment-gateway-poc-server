@@ -1,6 +1,6 @@
-import { Customer } from '../../domain/customer/customer';
-import { Delivery } from '../../domain/delivery/delivery';
-import { Transaction } from '../../domain/transaction/transaction';
+import { Customer } from '@/domain/customer/customer';
+import { Delivery } from '@/domain/delivery/delivery';
+import { Transaction } from '@/domain/transaction/transaction';
 
 export interface CheckoutRepository {
   createPendingTransaction(input: {

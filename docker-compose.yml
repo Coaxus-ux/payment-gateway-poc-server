@@ -31,9 +31,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-      WOMPI_BASE_URL: ${WOMPI_BASE_URL}
-      WOMPI_PUBLIC_KEY: ${WOMPI_PUBLIC_KEY}
-      WOMPI_PRIVATE_KEY: ${WOMPI_PRIVATE_KEY}
+      PAYMENT_BASE_URL: ${PAYMENT_BASE_URL}
+      PAYMENT_PUBLIC_KEY: ${PAYMENT_PUBLIC_KEY}
+      PAYMENT_PRIVATE_KEY: ${PAYMENT_PRIVATE_KEY}
     ports:
       - "3000:3000"
     healthcheck:
@@ -54,5 +54,23 @@ services:
       postgres:
         condition: service_healthy
 
+  postgres_test:
+    image: postgres:16-alpine
+    profiles: ["test"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: checkout_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d checkout_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 volumes:
   postgres_data:
+  postgres_test_data:

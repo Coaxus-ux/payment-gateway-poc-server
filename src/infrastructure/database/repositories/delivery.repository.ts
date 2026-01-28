@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DeliveryRepository } from '../../../application/ports/delivery-repository';
-import { Delivery } from '../../../domain/delivery/delivery';
-import { DeliveryEntity } from '../entities/delivery.entity';
-import { DeliveryMapper } from '../mappers/delivery.mapper';
+import { DeliveryRepository } from '@/application/ports/delivery-repository';
+import { Delivery } from '@/domain/delivery/delivery';
+import { DeliveryEntity } from '@/infrastructure/database/entities/delivery.entity';
+import { DeliveryMapper } from '@/infrastructure/database/mappers/delivery.mapper';
 
 @Injectable()
 export class DeliveryRepositoryTypeOrm implements DeliveryRepository {

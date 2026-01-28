@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Delivery } from '../../domain/delivery/delivery';
-import { Result } from '../../shared/result';
-import { ApplicationError } from '../errors';
-import { DeliveryRepository } from '../ports/delivery-repository';
-import { DELIVERY_REPOSITORY } from '../tokens';
+import { Delivery } from '@/domain/delivery/delivery';
+import { Result } from '@/shared/result';
+import { ApplicationError } from '@/application/errors';
+import { DeliveryRepository } from '@/application/ports/delivery-repository';
+import { DELIVERY_REPOSITORY } from '@/application/tokens';
 
 @Injectable()
 export class GetDeliveryUseCase {

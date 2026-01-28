@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { GetCustomerUseCase } from '../../application/use-cases/get-customer.usecase';
-import { mapErrorToHttp } from '../http/error-mapper';
+import { GetCustomerUseCase } from '@/application/use-cases/get-customer.usecase';
+import { mapErrorToHttp } from '@/presentation/http/error-mapper';
 
 @ApiTags('customers')
 @Controller('customers')

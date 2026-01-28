@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Customer } from '../../domain/customer/customer';
-import { Result } from '../../shared/result';
-import { ApplicationError } from '../errors';
-import { CustomerRepository } from '../ports/customer-repository';
-import { CUSTOMER_REPOSITORY } from '../tokens';
+import { Customer } from '@/domain/customer/customer';
+import { Result } from '@/shared/result';
+import { ApplicationError } from '@/application/errors';
+import { CustomerRepository } from '@/application/ports/customer-repository';
+import { CUSTOMER_REPOSITORY } from '@/application/tokens';
 
 @Injectable()
 export class GetCustomerUseCase {

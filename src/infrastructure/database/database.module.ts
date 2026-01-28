@@ -15,7 +15,7 @@ import {
   DELIVERY_REPOSITORY,
   PRODUCT_REPOSITORY,
   TRANSACTION_REPOSITORY,
-} from '../../application/tokens';
+} from '@/application/tokens';
 
 @Module({
   imports: [

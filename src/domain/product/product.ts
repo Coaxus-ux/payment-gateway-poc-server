@@ -1,4 +1,4 @@
-import { Result } from '../../shared/result';
+import { Result } from '@/shared/result';
 import { Stock } from './stock';
 
 export type ProductSnapshot = {

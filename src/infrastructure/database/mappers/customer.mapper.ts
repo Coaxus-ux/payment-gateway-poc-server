@@ -1,5 +1,5 @@
-import { Customer } from '../../../domain/customer/customer';
-import { CustomerEntity } from '../entities/customer.entity';
+import { Customer } from '@/domain/customer/customer';
+import { CustomerEntity } from '@/infrastructure/database/entities/customer.entity';
 
 export const CustomerMapper = {
   toDomain(entity: CustomerEntity): Customer {

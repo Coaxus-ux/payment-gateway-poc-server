@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ApplicationModule } from '../application/application.module';
+import { ApplicationModule } from '@/application/application.module';
 import { CustomerController } from './controllers/customer.controller';
 import { DeliveryController } from './controllers/delivery.controller';
 import { HealthController } from './controllers/health.controller';

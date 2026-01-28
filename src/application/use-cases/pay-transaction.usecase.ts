@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Transaction } from '../../domain/transaction/transaction';
-import { TransactionStatus } from '../../domain/transaction/transaction-status';
-import { Result } from '../../shared/result';
-import { ApplicationError } from '../errors';
-import { CustomerRepository } from '../ports/customer-repository';
-import { PaymentProvider } from '../ports/payment-provider';
-import { TransactionRepository } from '../ports/transaction-repository';
+import { Transaction } from '@/domain/transaction/transaction';
+import { TransactionStatus } from '@/domain/transaction/transaction-status';
+import { Result } from '@/shared/result';
+import { ApplicationError } from '@/application/errors';
+import { CustomerRepository } from '@/application/ports/customer-repository';
+import { PaymentProvider } from '@/application/ports/payment-provider';
+import { TransactionRepository } from '@/application/ports/transaction-repository';
 import {
   CUSTOMER_REPOSITORY,
   PAYMENT_PROVIDER,
   TRANSACTION_REPOSITORY,
-} from '../tokens';
+} from '@/application/tokens';
 
 export type PayTransactionInput = {
   transactionId: string;

@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Transaction } from '../../domain/transaction/transaction';
-import { Result } from '../../shared/result';
-import { ApplicationError } from '../errors';
-import { TransactionRepository } from '../ports/transaction-repository';
-import { TRANSACTION_REPOSITORY } from '../tokens';
+import { Transaction } from '@/domain/transaction/transaction';
+import { Result } from '@/shared/result';
+import { ApplicationError } from '@/application/errors';
+import { TransactionRepository } from '@/application/ports/transaction-repository';
+import { TRANSACTION_REPOSITORY } from '@/application/tokens';
 
 @Injectable()
 export class GetTransactionUseCase {
