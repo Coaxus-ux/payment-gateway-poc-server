@@ -62,11 +62,14 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
   }): Promise<Transaction | null> {
     return this.dataSource.transaction(async (manager) => {
       const repo = manager.getRepository(TransactionEntity);
-      const entity = await repo.findOne({
-        where: { id: input.id },
-        relations: ['product', 'customer', 'delivery'],
-        lock: { mode: 'pessimistic_write' },
-      });
+      const entity = await repo
+        .createQueryBuilder('tx')
+        .innerJoinAndSelect('tx.product', 'product')
+        .innerJoinAndSelect('tx.customer', 'customer')
+        .innerJoinAndSelect('tx.delivery', 'delivery')
+        .where('tx.id = :id', { id: input.id })
+        .setLock('pessimistic_write')
+        .getOne();
       if (!entity) {
         return null;
       }
@@ -94,11 +97,14 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
       const txRepo = manager.getRepository(TransactionEntity);
       const productRepo = manager.getRepository(ProductEntity);
 
-      const entity = await txRepo.findOne({
-        where: { id: input.id },
-        relations: ['product', 'customer', 'delivery'],
-        lock: { mode: 'pessimistic_write' },
-      });
+      const entity = await txRepo
+        .createQueryBuilder('tx')
+        .innerJoinAndSelect('tx.product', 'product')
+        .innerJoinAndSelect('tx.customer', 'customer')
+        .innerJoinAndSelect('tx.delivery', 'delivery')
+        .where('tx.id = :id', { id: input.id })
+        .setLock('pessimistic_write')
+        .getOne();
 
       if (!entity) {
         return {

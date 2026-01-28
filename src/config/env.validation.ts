@@ -20,6 +20,8 @@ const envSchema = z.object({
   PAYMENT_BASE_URL: z.string(),
   PAYMENT_PUBLIC_KEY: z.string().optional(),
   PAYMENT_PRIVATE_KEY: z.string().optional(),
+  PAYMENT_EVENTS_KEY: z.string().optional(),
+  PAYMENT_INTEGRITY_KEY: z.string().optional(),
 });
 
 export function validateEnv(config: Record<string, unknown>) {
