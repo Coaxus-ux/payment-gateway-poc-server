@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { validateEnv } from './config/env.validation';
 import { DatabaseModule } from './infrastructure/database/database.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
+import { ApplicationModule } from './application/application.module';
+import { PaymentModule } from './infrastructure/payment/payment.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { typeOrmConfig } from './infrastructure/database/typeorm.config';
       useFactory: typeOrmConfig,
     }),
     DatabaseModule,
+    PaymentModule,
+    ApplicationModule,
   ],
 })
 export class AppModule {}
