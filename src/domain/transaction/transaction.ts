@@ -47,6 +47,32 @@ export class Transaction {
     );
   }
 
+  static restore(props: {
+    id: string;
+    productId: string;
+    customerId: string;
+    deliveryId: string;
+    amount: number;
+    currency: string;
+    productSnapshot: ProductSnapshot;
+    status: TransactionStatus;
+    providerRef: string | null;
+    failureReason: string | null;
+  }) {
+    return new Transaction(
+      props.id,
+      props.productId,
+      props.customerId,
+      props.deliveryId,
+      props.amount,
+      props.currency,
+      props.productSnapshot,
+      props.status,
+      props.providerRef,
+      props.failureReason,
+    );
+  }
+
   markSuccess(providerRef: string) {
     if (this.status !== TransactionStatus.PENDING) {
       return Result.err('TRANSACTION_STATUS_INVALID');

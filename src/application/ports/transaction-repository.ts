@@ -15,5 +15,10 @@ export interface TransactionRepository {
   }): Promise<{
     transaction: Transaction | null;
     stockAdjusted: boolean;
+    outcome:
+      | 'SUCCESS'
+      | 'ALREADY_FINAL'
+      | 'INSUFFICIENT_STOCK'
+      | 'NOT_FOUND';
   }>;
 }
