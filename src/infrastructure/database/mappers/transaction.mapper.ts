@@ -14,6 +14,7 @@ export const TransactionMapper = {
         id: entity.product.id,
         name: entity.productName,
         description: entity.productDescription,
+        imageUrl: entity.productImageUrl,
         priceAmount: entity.productPriceAmount,
         currency: entity.productCurrency,
       },

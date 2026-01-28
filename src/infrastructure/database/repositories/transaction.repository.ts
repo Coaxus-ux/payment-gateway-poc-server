@@ -41,6 +41,7 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
     entity.quantity = 1;
     entity.productName = transaction.productSnapshot.name;
     entity.productDescription = transaction.productSnapshot.description;
+    entity.productImageUrl = transaction.productSnapshot.imageUrl;
     entity.productPriceAmount = transaction.productSnapshot.priceAmount;
     entity.productCurrency = transaction.productSnapshot.currency;
     const saved = await this.repo.save(entity);

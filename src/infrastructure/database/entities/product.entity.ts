@@ -11,6 +11,9 @@ export class ProductEntity {
   @Column({ type: 'text', nullable: true })
   description!: string | null;
 
+  @Column({ name: 'image_url', type: 'text', nullable: true })
+  imageUrl!: string | null;
+
   @Column({ name: 'price_amount', type: 'integer' })
   priceAmount!: number;
 
