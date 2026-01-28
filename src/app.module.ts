@@ -4,8 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { validateEnv } from './config/env.validation';
 import { DatabaseModule } from './infrastructure/database/database.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
-import { ApplicationModule } from './application/application.module';
 import { PaymentModule } from './infrastructure/payment/payment.module';
+import { PresentationModule } from './presentation/presentation.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { PaymentModule } from './infrastructure/payment/payment.module';
     }),
     DatabaseModule,
     PaymentModule,
-    ApplicationModule,
+    PresentationModule,
   ],
 })
 export class AppModule {}
