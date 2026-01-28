@@ -9,7 +9,13 @@ export interface PaymentProvider {
   charge(input: {
     amount: number;
     currency: string;
-    cardToken: string;
+    card: {
+      number: string;
+      expMonth: number;
+      expYear: number;
+      cvc: string;
+      holderName?: string;
+    };
     customerEmail: string;
     reference: string;
   }): Promise<PaymentResult>;
