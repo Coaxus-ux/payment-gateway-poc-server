@@ -1,4 +1,11 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { ExpiryDate } from '@/presentation/validators/expiry.validator';
 import { LuhnCheck } from '@/presentation/validators/luhn.validator';
 

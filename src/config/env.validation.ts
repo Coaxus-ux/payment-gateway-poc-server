@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import { z } from 'zod';
 
 const envSchema = z.object({
@@ -9,6 +10,13 @@ const envSchema = z.object({
   POSTGRES_USER: z.string(),
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_DB: z.string(),
+  CORS_ORIGINS: z.string().default(''),
+  CORS_METHODS: z.string().default('GET,POST,PATCH,OPTIONS'),
+  CORS_HEADERS: z.string().default('Content-Type,Authorization'),
+  CORS_CREDENTIALS: z
+    .string()
+    .optional()
+    .transform((value) => value === 'true'),
   PAYMENT_BASE_URL: z.string(),
   PAYMENT_PUBLIC_KEY: z.string().optional(),
   PAYMENT_PRIVATE_KEY: z.string().optional(),

@@ -8,6 +8,7 @@ import { Transaction } from '@/domain/transaction/transaction';
 import { TransactionStatus } from '@/domain/transaction/transaction-status';
 import { CustomerEntity } from '@/infrastructure/database/entities/customer.entity';
 import { DeliveryEntity } from '@/infrastructure/database/entities/delivery.entity';
+import { ProductEntity } from '@/infrastructure/database/entities/product.entity';
 import { TransactionEntity } from '@/infrastructure/database/entities/transaction.entity';
 import { CustomerMapper } from '@/infrastructure/database/mappers/customer.mapper';
 import { DeliveryMapper } from '@/infrastructure/database/mappers/delivery.mapper';
@@ -31,9 +32,7 @@ export class CheckoutRepositoryTypeOrm implements CheckoutRepository {
         where: { email: input.customer.email },
       });
       if (!customer) {
-        customer = customerRepo.create(
-          CustomerMapper.toEntity(input.customer),
-        );
+        customer = customerRepo.create(CustomerMapper.toEntity(input.customer));
         customer = await customerRepo.save(customer);
       }
 
@@ -44,7 +43,7 @@ export class CheckoutRepositoryTypeOrm implements CheckoutRepository {
 
       const tx = new TransactionEntity();
       tx.id = input.transaction.id;
-      tx.product = { id: input.transaction.productId } as any;
+      tx.product = { id: input.transaction.productId } as ProductEntity;
       tx.customer = customer;
       tx.delivery = savedDelivery;
       tx.status = TransactionStatus.PENDING;

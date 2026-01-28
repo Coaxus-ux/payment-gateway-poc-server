@@ -26,14 +26,14 @@ describe('CreateTransactionUseCase', () => {
   it('rejects when amount mismatches', async () => {
     const useCase = new CreateTransactionUseCase(
       {
-        findById: async () => makeProduct(5),
-        findAll: async () => [],
+        findById: () => Promise.resolve(makeProduct(5)),
+        findAll: () => Promise.resolve([]),
       },
       {
-        createPendingTransaction: async () => {
+        createPendingTransaction: () => {
           throw new Error('should not be called');
         },
-        updateDeliveryIfPending: async () => null,
+        updateDeliveryIfPending: () => Promise.resolve(null),
       },
     );
 
@@ -54,13 +54,13 @@ describe('CreateTransactionUseCase', () => {
   it('creates transaction when valid', async () => {
     const useCase = new CreateTransactionUseCase(
       {
-        findById: async () => makeProduct(5),
-        findAll: async () => [],
+        findById: () => Promise.resolve(makeProduct(5)),
+        findAll: () => Promise.resolve([]),
       },
       {
-        createPendingTransaction: async ({ transaction }) =>
-          Result.ok(transaction).value,
-        updateDeliveryIfPending: async () => null,
+        createPendingTransaction: ({ transaction }) =>
+          Promise.resolve(Result.ok(transaction).value),
+        updateDeliveryIfPending: () => Promise.resolve(null),
       },
     );
 

@@ -3,7 +3,11 @@
     "allow": [
       "Bash(node:*)",
       "Bash(npx tsc:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(npx nest build:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx prettier:*)",
+      "Bash(npx jest:*)"
     ]
   }
 }

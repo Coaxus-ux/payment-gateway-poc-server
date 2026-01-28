@@ -15,7 +15,7 @@ export class ProductRepositoryTypeOrm implements ProductRepository {
 
   async findAll(): Promise<Product[]> {
     const entities = await this.repo.find();
-    return entities.map(ProductMapper.toDomain);
+    return entities.map((e) => ProductMapper.toDomain(e));
   }
 
   async findById(id: string): Promise<Product | null> {

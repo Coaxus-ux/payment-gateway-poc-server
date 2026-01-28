@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
-import { PaymentProvider, PaymentResult } from '@/application/ports/payment-provider';
+import {
+  PaymentProvider,
+  PaymentResult,
+} from '@/application/ports/payment-provider';
 
 type AcceptanceTokens = {
   acceptanceToken: string;
@@ -21,7 +25,10 @@ export class PaymentGatewayProvider implements PaymentProvider {
   }
 
   private async getAcceptanceTokens(): Promise<AcceptanceTokens> {
-    if (this.cachedTokens && Date.now() - this.cachedTokens.fetchedAt < 600000) {
+    if (
+      this.cachedTokens &&
+      Date.now() - this.cachedTokens.fetchedAt < 600000
+    ) {
       return this.cachedTokens.tokens;
     }
     const publicKey = process.env.PAYMENT_PUBLIC_KEY ?? '';
@@ -29,8 +36,8 @@ export class PaymentGatewayProvider implements PaymentProvider {
     const presigned = response.data?.data?.presigned_acceptance;
     const personal = response.data?.data?.presigned_personal_data_auth;
     const tokens = {
-      acceptanceToken: presigned?.acceptance_token,
-      acceptPersonalAuth: personal?.acceptance_token,
+      acceptanceToken: presigned?.acceptance_token as string,
+      acceptPersonalAuth: personal?.acceptance_token as string,
     };
     if (!tokens.acceptanceToken || !tokens.acceptPersonalAuth) {
       throw new Error('Missing payment acceptance tokens');
@@ -72,7 +79,7 @@ export class PaymentGatewayProvider implements PaymentProvider {
       },
     );
 
-    const cardToken = cardTokenRes.data?.data?.id;
+    const cardToken: string | undefined = cardTokenRes.data?.data?.id;
     if (!cardToken) {
       return {
         status: 'FAILED',
@@ -97,7 +104,7 @@ export class PaymentGatewayProvider implements PaymentProvider {
       },
     );
 
-    const paymentSourceId = paymentSourceRes.data?.data?.id;
+    const paymentSourceId: number | undefined = paymentSourceRes.data?.data?.id;
     if (!paymentSourceId) {
       return {
         status: 'FAILED',
@@ -127,15 +134,17 @@ export class PaymentGatewayProvider implements PaymentProvider {
       },
     );
 
-    const status = transactionRes.data?.data?.status;
-    const providerRef = transactionRes.data?.data?.id ?? '';
+    const status: string | undefined = transactionRes.data?.data?.status;
+    const providerRef: string = (transactionRes.data?.data?.id as string) ?? '';
     if (status === 'APPROVED') {
       return { status: 'SUCCESS', providerRef };
     }
     return {
       status: 'FAILED',
       providerRef,
-      failureReason: transactionRes.data?.data?.status_message ?? 'PAYMENT_FAILED',
+      failureReason:
+        (transactionRes.data?.data?.status_message as string) ??
+        'PAYMENT_FAILED',
     };
   }
 }

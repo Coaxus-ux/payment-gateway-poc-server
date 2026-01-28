@@ -5,10 +5,15 @@ export class DeliveryEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'varchar', length: 200 })
+  @Column({ name: 'address_line1', type: 'varchar', length: 200 })
   addressLine1!: string;
 
-  @Column({ type: 'varchar', length: 200, nullable: true })
+  @Column({
+    name: 'address_line2',
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
   addressLine2!: string | null;
 
   @Column({ type: 'varchar', length: 100 })
@@ -17,6 +22,6 @@ export class DeliveryEntity {
   @Column({ type: 'varchar', length: 100 })
   country!: string;
 
-  @Column({ type: 'varchar', length: 20, nullable: true })
+  @Column({ name: 'postal_code', type: 'varchar', length: 20, nullable: true })
   postalCode!: string | null;
 }
