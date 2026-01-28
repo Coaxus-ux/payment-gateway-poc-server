@@ -5,7 +5,7 @@ export type ProductSnapshot = {
   id: string;
   name: string;
   description: string | null;
-  imageUrl: string | null;
+  imageUrls: string[];
   priceAmount: number;
   currency: string;
 };
@@ -15,7 +15,7 @@ export class Product {
     readonly id: string,
     readonly name: string,
     readonly description: string | null,
-    readonly imageUrl: string | null,
+    readonly imageUrls: string[],
     readonly priceAmount: number,
     readonly currency: string,
     readonly stock: Stock,
@@ -25,7 +25,7 @@ export class Product {
     id: string;
     name: string;
     description?: string | null;
-    imageUrl?: string | null;
+    imageUrls?: string[];
     priceAmount: number;
     currency: string;
     stock: Stock;
@@ -41,7 +41,7 @@ export class Product {
         props.id,
         props.name,
         props.description ?? null,
-        props.imageUrl ?? null,
+        props.imageUrls ?? [],
         props.priceAmount,
         props.currency,
         props.stock,
@@ -54,7 +54,7 @@ export class Product {
       id: this.id,
       name: this.name,
       description: this.description,
-      imageUrl: this.imageUrl,
+      imageUrls: this.imageUrls,
       priceAmount: this.priceAmount,
       currency: this.currency,
     };

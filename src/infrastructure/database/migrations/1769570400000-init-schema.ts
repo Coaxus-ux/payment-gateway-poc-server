@@ -10,7 +10,7 @@ export class InitSchema1769570400000 implements MigrationInterface {
         id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
         name varchar(200) NOT NULL,
         description text,
-        image_url text,
+        image_urls jsonb,
         price_amount integer NOT NULL,
         currency varchar(10) NOT NULL,
         stock_units integer NOT NULL
@@ -48,7 +48,7 @@ export class InitSchema1769570400000 implements MigrationInterface {
         quantity integer NOT NULL,
         product_name varchar(200) NOT NULL,
         product_description text,
-        product_image_url text,
+        product_image_urls jsonb,
         product_price_amount integer NOT NULL,
         product_currency varchar(10) NOT NULL,
         version integer NOT NULL DEFAULT 1
