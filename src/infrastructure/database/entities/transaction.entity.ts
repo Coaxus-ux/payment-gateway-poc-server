@@ -63,6 +63,9 @@ export class TransactionEntity {
   @Column({ name: 'product_description', type: 'text', nullable: true })
   productDescription!: string | null;
 
+  @Column({ name: 'product_image_url', type: 'text', nullable: true })
+  productImageUrl!: string | null;
+
   @Column({ name: 'product_price_amount', type: 'integer' })
   productPriceAmount!: number;
 

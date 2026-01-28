@@ -12,6 +12,7 @@ export const ProductMapper = {
       id: entity.id,
       name: entity.name,
       description: entity.description,
+      imageUrl: entity.imageUrl,
       priceAmount: entity.priceAmount,
       currency: entity.currency,
       stock: stockResult.value,
