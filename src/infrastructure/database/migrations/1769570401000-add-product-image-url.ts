@@ -6,16 +6,20 @@ export class AddProductImageUrl1769570401000
   name = 'AddProductImageUrl1769570401000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('ALTER TABLE products ADD COLUMN image_url text');
     await queryRunner.query(
-      'ALTER TABLE transactions ADD COLUMN product_image_url text',
+      'ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url text',
+    );
+    await queryRunner.query(
+      'ALTER TABLE transactions ADD COLUMN IF NOT EXISTS product_image_url text',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE transactions DROP COLUMN product_image_url',
+      'ALTER TABLE transactions DROP COLUMN IF EXISTS product_image_url',
     );
-    await queryRunner.query('ALTER TABLE products DROP COLUMN image_url');
+    await queryRunner.query(
+      'ALTER TABLE products DROP COLUMN IF EXISTS image_url',
+    );
   }
 }
