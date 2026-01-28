@@ -52,7 +52,7 @@ export class CheckoutRepositoryTypeOrm implements CheckoutRepository {
       tx.quantity = 1;
       tx.productName = input.transaction.productSnapshot.name;
       tx.productDescription = input.transaction.productSnapshot.description;
-      tx.productImageUrl = input.transaction.productSnapshot.imageUrl;
+      tx.productImageUrls = input.transaction.productSnapshot.imageUrls;
       tx.productPriceAmount = input.transaction.productSnapshot.priceAmount;
       tx.productCurrency = input.transaction.productSnapshot.currency;
 
