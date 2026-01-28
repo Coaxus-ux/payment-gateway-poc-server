@@ -1,5 +1,5 @@
-import { Result } from '../../shared/result';
-import { ProductSnapshot } from '../product/product';
+import { Result } from '@/shared/result';
+import { ProductSnapshot } from '@/domain/product/product';
 import { TransactionStatus } from './transaction-status';
 
 export class Transaction {

@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { CreateTransactionUseCase } from '../../application/use-cases/create-transaction.usecase';
-import { GetTransactionUseCase } from '../../application/use-cases/get-transaction.usecase';
-import { PayTransactionUseCase } from '../../application/use-cases/pay-transaction.usecase';
-import { CreateTransactionDto } from '../dto/create-transaction.dto';
-import { PayTransactionDto } from '../dto/pay-transaction.dto';
-import { mapErrorToHttp } from '../http/error-mapper';
+import { CreateTransactionUseCase } from '@/application/use-cases/create-transaction.usecase';
+import { GetTransactionUseCase } from '@/application/use-cases/get-transaction.usecase';
+import { PayTransactionUseCase } from '@/application/use-cases/pay-transaction.usecase';
+import { CreateTransactionDto } from '@/presentation/dto/create-transaction.dto';
+import { PayTransactionDto } from '@/presentation/dto/pay-transaction.dto';
+import { mapErrorToHttp } from '@/presentation/http/error-mapper';
 
 @ApiTags('transactions')
 @Controller('transactions')

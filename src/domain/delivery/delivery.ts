@@ -1,5 +1,5 @@
-import { Result } from '../../shared/result';
-import { TransactionStatus } from '../transaction/transaction-status';
+import { Result } from '@/shared/result';
+import { TransactionStatus } from '@/domain/transaction/transaction-status';
 
 export class Delivery {
   private constructor(

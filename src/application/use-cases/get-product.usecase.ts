@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Product } from '../../domain/product/product';
-import { Result } from '../../shared/result';
-import { ApplicationError } from '../errors';
-import { ProductRepository } from '../ports/product-repository';
-import { PRODUCT_REPOSITORY } from '../tokens';
+import { Product } from '@/domain/product/product';
+import { Result } from '@/shared/result';
+import { ApplicationError } from '@/application/errors';
+import { ProductRepository } from '@/application/ports/product-repository';
+import { PRODUCT_REPOSITORY } from '@/application/tokens';
 
 @Injectable()
 export class GetProductUseCase {

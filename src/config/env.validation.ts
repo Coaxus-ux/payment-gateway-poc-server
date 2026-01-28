@@ -9,9 +9,9 @@ const envSchema = z.object({
   POSTGRES_USER: z.string(),
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_DB: z.string(),
-  WOMPI_BASE_URL: z.string().default('https://sandbox.wompi.co'),
-  WOMPI_PUBLIC_KEY: z.string().optional(),
-  WOMPI_PRIVATE_KEY: z.string().optional(),
+  PAYMENT_BASE_URL: z.string(),
+  PAYMENT_PUBLIC_KEY: z.string().optional(),
+  PAYMENT_PRIVATE_KEY: z.string().optional(),
 });
 
 export function validateEnv(config: Record<string, unknown>) {

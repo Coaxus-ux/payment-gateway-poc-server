@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
-import { PaymentProvider, PaymentResult } from '../../application/ports/payment-provider';
+import { PaymentProvider, PaymentResult } from '@/application/ports/payment-provider';
 
 type AcceptanceTokens = {
   acceptanceToken: string;
@@ -8,14 +8,14 @@ type AcceptanceTokens = {
 };
 
 @Injectable()
-export class WompiPaymentProvider implements PaymentProvider {
+export class PaymentGatewayProvider implements PaymentProvider {
   private readonly http: AxiosInstance;
   private cachedTokens: { tokens: AcceptanceTokens; fetchedAt: number } | null =
     null;
 
   constructor() {
     this.http = axios.create({
-      baseURL: process.env.WOMPI_BASE_URL ?? 'https://sandbox.wompi.co',
+      baseURL: process.env.PAYMENT_BASE_URL,
       timeout: 15000,
     });
   }
@@ -24,7 +24,7 @@ export class WompiPaymentProvider implements PaymentProvider {
     if (this.cachedTokens && Date.now() - this.cachedTokens.fetchedAt < 600000) {
       return this.cachedTokens.tokens;
     }
-    const publicKey = process.env.WOMPI_PUBLIC_KEY ?? '';
+    const publicKey = process.env.PAYMENT_PUBLIC_KEY ?? '';
     const response = await this.http.get(`/v1/merchants/${publicKey}`);
     const presigned = response.data?.data?.presigned_acceptance;
     const personal = response.data?.data?.presigned_personal_data_auth;
@@ -33,7 +33,7 @@ export class WompiPaymentProvider implements PaymentProvider {
       acceptPersonalAuth: personal?.acceptance_token,
     };
     if (!tokens.acceptanceToken || !tokens.acceptPersonalAuth) {
-      throw new Error('Missing Wompi acceptance tokens');
+      throw new Error('Missing payment acceptance tokens');
     }
     this.cachedTokens = { tokens, fetchedAt: Date.now() };
     return tokens;
@@ -53,8 +53,8 @@ export class WompiPaymentProvider implements PaymentProvider {
     reference: string;
   }): Promise<PaymentResult> {
     const tokens = await this.getAcceptanceTokens();
-    const publicKey = process.env.WOMPI_PUBLIC_KEY ?? '';
-    const privateKey = process.env.WOMPI_PRIVATE_KEY ?? '';
+    const publicKey = process.env.PAYMENT_PUBLIC_KEY ?? '';
+    const privateKey = process.env.PAYMENT_PRIVATE_KEY ?? '';
 
     const cardTokenRes = await this.http.post(
       '/v1/tokens/cards',

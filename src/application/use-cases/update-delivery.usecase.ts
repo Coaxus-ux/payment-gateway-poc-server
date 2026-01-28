@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Delivery } from '../../domain/delivery/delivery';
-import { Result } from '../../shared/result';
-import { ApplicationError } from '../errors';
-import { CheckoutRepository } from '../ports/checkout-repository';
-import { DeliveryRepository } from '../ports/delivery-repository';
-import { TransactionRepository } from '../ports/transaction-repository';
+import { Delivery } from '@/domain/delivery/delivery';
+import { Result } from '@/shared/result';
+import { ApplicationError } from '@/application/errors';
+import { CheckoutRepository } from '@/application/ports/checkout-repository';
+import { DeliveryRepository } from '@/application/ports/delivery-repository';
+import { TransactionRepository } from '@/application/ports/transaction-repository';
 import {
   CHECKOUT_REPOSITORY,
   DELIVERY_REPOSITORY,
   TRANSACTION_REPOSITORY,
-} from '../tokens';
+} from '@/application/tokens';
 
 export type UpdateDeliveryInput = {
   transactionId: string;

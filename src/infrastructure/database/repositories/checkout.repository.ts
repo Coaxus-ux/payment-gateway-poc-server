@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { CheckoutRepository } from '../../../application/ports/checkout-repository';
-import { Customer } from '../../../domain/customer/customer';
-import { Delivery } from '../../../domain/delivery/delivery';
-import { Transaction } from '../../../domain/transaction/transaction';
-import { TransactionStatus } from '../../../domain/transaction/transaction-status';
-import { CustomerEntity } from '../entities/customer.entity';
-import { DeliveryEntity } from '../entities/delivery.entity';
-import { TransactionEntity } from '../entities/transaction.entity';
-import { CustomerMapper } from '../mappers/customer.mapper';
-import { DeliveryMapper } from '../mappers/delivery.mapper';
-import { TransactionMapper } from '../mappers/transaction.mapper';
+import { CheckoutRepository } from '@/application/ports/checkout-repository';
+import { Customer } from '@/domain/customer/customer';
+import { Delivery } from '@/domain/delivery/delivery';
+import { Transaction } from '@/domain/transaction/transaction';
+import { TransactionStatus } from '@/domain/transaction/transaction-status';
+import { CustomerEntity } from '@/infrastructure/database/entities/customer.entity';
+import { DeliveryEntity } from '@/infrastructure/database/entities/delivery.entity';
+import { TransactionEntity } from '@/infrastructure/database/entities/transaction.entity';
+import { CustomerMapper } from '@/infrastructure/database/mappers/customer.mapper';
+import { DeliveryMapper } from '@/infrastructure/database/mappers/delivery.mapper';
+import { TransactionMapper } from '@/infrastructure/database/mappers/transaction.mapper';
 
 @Injectable()
 export class CheckoutRepositoryTypeOrm implements CheckoutRepository {

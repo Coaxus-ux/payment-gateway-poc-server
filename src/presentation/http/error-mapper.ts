@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { ApplicationError } from '../../application/errors';
+import { ApplicationError } from '@/application/errors';
 
 export function mapErrorToHttp(error: ApplicationError): never {
   switch (error.type) {

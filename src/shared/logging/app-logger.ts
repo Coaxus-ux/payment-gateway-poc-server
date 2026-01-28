@@ -1,5 +1,5 @@
 import { LoggerService } from '@nestjs/common';
-import { RequestContextStore } from '../request-context/request-context';
+import { RequestContextStore } from '@/shared/request-context/request-context';
 
 function maskSensitive(input: unknown): unknown {
   if (typeof input === 'string') {

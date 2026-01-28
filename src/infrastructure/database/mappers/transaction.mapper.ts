@@ -1,5 +1,5 @@
-import { Transaction } from '../../../domain/transaction/transaction';
-import { TransactionEntity } from '../entities/transaction.entity';
+import { Transaction } from '@/domain/transaction/transaction';
+import { TransactionEntity } from '@/infrastructure/database/entities/transaction.entity';
 
 export const TransactionMapper = {
   toDomain(entity: TransactionEntity): Transaction {

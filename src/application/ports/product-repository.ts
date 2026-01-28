@@ -1,4 +1,4 @@
-import { Product } from '../../domain/product/product';
+import { Product } from '@/domain/product/product';
 
 export interface ProductRepository {
   findAll(): Promise<Product[]>;

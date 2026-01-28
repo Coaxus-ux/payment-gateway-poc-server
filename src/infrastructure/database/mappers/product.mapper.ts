@@ -1,6 +1,6 @@
-import { Product } from '../../../domain/product/product';
-import { Stock } from '../../../domain/product/stock';
-import { ProductEntity } from '../entities/product.entity';
+import { Product } from '@/domain/product/product';
+import { Stock } from '@/domain/product/stock';
+import { ProductEntity } from '@/infrastructure/database/entities/product.entity';
 
 export const ProductMapper = {
   toDomain(entity: ProductEntity): Product {

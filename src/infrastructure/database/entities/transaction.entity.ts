@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   VersionColumn,
 } from 'typeorm';
-import { TransactionStatus } from '../../../domain/transaction/transaction-status';
+import { TransactionStatus } from '@/domain/transaction/transaction-status';
 import { CustomerEntity } from './customer.entity';
 import { DeliveryEntity } from './delivery.entity';
 import { ProductEntity } from './product.entity';

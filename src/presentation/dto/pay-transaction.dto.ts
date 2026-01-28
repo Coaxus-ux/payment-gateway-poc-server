@@ -1,6 +1,6 @@
 import { IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
-import { ExpiryDate } from '../validators/expiry.validator';
-import { LuhnCheck } from '../validators/luhn.validator';
+import { ExpiryDate } from '@/presentation/validators/expiry.validator';
+import { LuhnCheck } from '@/presentation/validators/luhn.validator';
 
 export class PayTransactionDto {
   @IsString()

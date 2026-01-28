@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { TransactionRepository } from '../../../application/ports/transaction-repository';
-import { Transaction } from '../../../domain/transaction/transaction';
-import { TransactionStatus } from '../../../domain/transaction/transaction-status';
-import { CustomerEntity } from '../entities/customer.entity';
-import { DeliveryEntity } from '../entities/delivery.entity';
-import { ProductEntity } from '../entities/product.entity';
-import { TransactionEntity } from '../entities/transaction.entity';
-import { TransactionMapper } from '../mappers/transaction.mapper';
+import { TransactionRepository } from '@/application/ports/transaction-repository';
+import { Transaction } from '@/domain/transaction/transaction';
+import { TransactionStatus } from '@/domain/transaction/transaction-status';
+import { CustomerEntity } from '@/infrastructure/database/entities/customer.entity';
+import { DeliveryEntity } from '@/infrastructure/database/entities/delivery.entity';
+import { ProductEntity } from '@/infrastructure/database/entities/product.entity';
+import { TransactionEntity } from '@/infrastructure/database/entities/transaction.entity';
+import { TransactionMapper } from '@/infrastructure/database/mappers/transaction.mapper';
 
 @Injectable()
 export class TransactionRepositoryTypeOrm implements TransactionRepository {
