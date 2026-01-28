@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AppLogger } from './shared/logging/app-logger';
+import { HttpLoggingInterceptor } from './shared/logging/http-logging.interceptor';
 import { requestContextMiddleware } from './shared/request-context/request-context.middleware';
 
 async function bootstrap() {
@@ -13,6 +14,7 @@ async function bootstrap() {
   app.useLogger(new AppLogger());
   app.use(requestContextMiddleware);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalInterceptors(new HttpLoggingInterceptor());
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Checkout API')

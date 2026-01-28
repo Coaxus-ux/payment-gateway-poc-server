@@ -15,7 +15,7 @@ Production-grade checkout onboarding API with Hexagonal Architecture, DDD, and R
 - Docker (for local DB and integration tests)
 
 ## Environment
-Copy `.env.example` to `.env` and adjust values.
+Copy `.env.example` to `.env` and adjust values (payment sandbox keys and base URL).
 
 ## Local Development
 ```bash

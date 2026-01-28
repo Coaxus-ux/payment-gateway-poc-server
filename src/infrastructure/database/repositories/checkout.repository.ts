@@ -76,11 +76,11 @@ export class CheckoutRepositoryTypeOrm implements CheckoutRepository {
     return this.dataSource.transaction(async (manager) => {
       const txRepo = manager.getRepository(TransactionEntity);
       const deliveryRepo = manager.getRepository(DeliveryEntity);
-      const transaction = await txRepo.findOne({
-        where: { id: input.transactionId },
-        relations: ['delivery'],
-        lock: { mode: 'pessimistic_write' },
-      });
+      const transaction = await txRepo
+        .createQueryBuilder('tx')
+        .where('tx.id = :id', { id: input.transactionId })
+        .setLock('pessimistic_write')
+        .getOne();
       if (!transaction) {
         return null;
       }
