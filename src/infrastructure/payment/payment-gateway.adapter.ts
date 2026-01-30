@@ -64,7 +64,9 @@ export class PaymentGatewayProvider implements PaymentProvider {
             }),
           )}`,
         );
-        return Promise.reject(error);
+        return Promise.reject(
+          error instanceof Error ? error : new Error(String(error)),
+        );
       },
     );
   }
