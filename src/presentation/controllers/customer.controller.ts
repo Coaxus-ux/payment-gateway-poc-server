@@ -12,6 +12,13 @@ export class CustomerController {
     private readonly getCustomerProfile: GetCustomerProfileUseCase,
   ) {}
 
+  @Get('lookup')
+  @ApiOkResponse({ description: 'Get customer profile by email' })
+  async lookup(@Query('email') email?: string) {
+    const result = await this.getCustomerProfile.execute({ email });
+    return result.ok ? result.value : mapErrorToHttp(result.error);
+  }
+
   @Get(':id')
   @ApiOkResponse({ description: 'Get customer by id' })
   async getById(@Param('id') id: string) {
@@ -23,13 +30,6 @@ export class CustomerController {
   @ApiOkResponse({ description: 'Get customer by email' })
   async getByEmail(@Query('email') email?: string) {
     const result = await this.getCustomer.execute({ email });
-    return result.ok ? result.value : mapErrorToHttp(result.error);
-  }
-
-  @Get('lookup')
-  @ApiOkResponse({ description: 'Get customer profile by email' })
-  async lookup(@Query('email') email?: string) {
-    const result = await this.getCustomerProfile.execute({ email });
     return result.ok ? result.value : mapErrorToHttp(result.error);
   }
 }
