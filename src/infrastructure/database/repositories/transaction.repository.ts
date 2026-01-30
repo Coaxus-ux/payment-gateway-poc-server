@@ -8,6 +8,7 @@ import { CustomerEntity } from '@/infrastructure/database/entities/customer.enti
 import { DeliveryEntity } from '@/infrastructure/database/entities/delivery.entity';
 import { ProductEntity } from '@/infrastructure/database/entities/product.entity';
 import { TransactionEntity } from '@/infrastructure/database/entities/transaction.entity';
+import { TransactionItemEntity } from '@/infrastructure/database/entities/transaction-item.entity';
 import { TransactionMapper } from '@/infrastructure/database/mappers/transaction.mapper';
 
 @Injectable()
@@ -22,49 +23,61 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
   async findById(id: string): Promise<Transaction | null> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: ['product', 'customer', 'delivery'],
+      relations: ['customer', 'delivery', 'items', 'items.product'],
     });
     return entity ? TransactionMapper.toDomain(entity) : null;
   }
 
   async create(transaction: Transaction): Promise<Transaction> {
-    const entity = new TransactionEntity();
-    entity.id = transaction.id;
-    entity.product = { id: transaction.productId } as ProductEntity;
-    entity.customer = { id: transaction.customerId } as CustomerEntity;
-    entity.delivery = { id: transaction.deliveryId } as DeliveryEntity;
-    entity.status = transaction.status;
-    entity.providerRef = transaction.providerRef;
-    entity.failureReason = transaction.failureReason;
-    entity.amount = transaction.amount;
-    entity.currency = transaction.currency;
-    entity.quantity = 1;
-    entity.productName = transaction.productSnapshot.name;
-    entity.productDescription = transaction.productSnapshot.description;
-    entity.productImageUrls = transaction.productSnapshot.imageUrls;
-    entity.productPriceAmount = transaction.productSnapshot.priceAmount;
-    entity.productCurrency = transaction.productSnapshot.currency;
-    const saved = await this.repo.save(entity);
-    const loaded = await this.repo.findOne({
-      where: { id: saved.id },
-      relations: ['product', 'customer', 'delivery'],
+    return this.dataSource.transaction(async (manager) => {
+      const transactionRepo = manager.getRepository(TransactionEntity);
+      const itemRepo = manager.getRepository(TransactionItemEntity);
+
+      const entity = new TransactionEntity();
+      entity.id = transaction.id;
+      entity.customer = { id: transaction.customerId } as CustomerEntity;
+      entity.delivery = { id: transaction.deliveryId } as DeliveryEntity;
+      entity.status = transaction.status;
+      entity.providerRef = transaction.providerRef;
+      entity.failureReason = transaction.failureReason;
+      entity.amount = transaction.amount;
+      entity.currency = transaction.currency;
+      entity.cardLast4 = null;
+
+      const saved = await transactionRepo.save(entity);
+      const items = transaction.items.map((item) => {
+        const detail = new TransactionItemEntity();
+        detail.transaction = saved;
+        detail.product = { id: item.productId } as ProductEntity;
+        detail.quantity = item.quantity;
+        detail.unitPriceAmount = item.productSnapshot.priceAmount;
+        detail.currency = item.productSnapshot.currency;
+        detail.productSnapshot = item.productSnapshot;
+        return detail;
+      });
+      await itemRepo.save(items);
+
+      const loaded = await transactionRepo.findOne({
+        where: { id: saved.id },
+        relations: ['customer', 'delivery', 'items', 'items.product'],
+      });
+      if (!loaded) {
+        throw new Error('Transaction not found after save');
+      }
+      return TransactionMapper.toDomain(loaded);
     });
-    if (!loaded) {
-      throw new Error('Transaction not found after save');
-    }
-    return TransactionMapper.toDomain(loaded);
   }
 
   async markFailedIfPending(input: {
     id: string;
     reason: string;
     providerRef: string | null;
+    cardLast4: string | null;
   }): Promise<Transaction | null> {
     return this.dataSource.transaction(async (manager) => {
       const repo = manager.getRepository(TransactionEntity);
       const entity = await repo
         .createQueryBuilder('tx')
-        .innerJoinAndSelect('tx.product', 'product')
         .innerJoinAndSelect('tx.customer', 'customer')
         .innerJoinAndSelect('tx.delivery', 'delivery')
         .where('tx.id = :id', { id: input.id })
@@ -79,6 +92,7 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
       entity.status = TransactionStatus.FAILED;
       entity.failureReason = input.reason;
       entity.providerRef = input.providerRef;
+      entity.cardLast4 = input.cardLast4;
       const saved = await repo.save(entity);
       return TransactionMapper.toDomain(saved);
     });
@@ -87,7 +101,7 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
   async markSuccessAndDecrementStock(input: {
     id: string;
     providerRef: string;
-    quantity: number;
+    cardLast4: string | null;
   }): Promise<{
     transaction: Transaction | null;
     stockAdjusted: boolean;
@@ -96,10 +110,10 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
     return this.dataSource.transaction(async (manager) => {
       const txRepo = manager.getRepository(TransactionEntity);
       const productRepo = manager.getRepository(ProductEntity);
+      const itemRepo = manager.getRepository(TransactionItemEntity);
 
       const entity = await txRepo
         .createQueryBuilder('tx')
-        .innerJoinAndSelect('tx.product', 'product')
         .innerJoinAndSelect('tx.customer', 'customer')
         .innerJoinAndSelect('tx.delivery', 'delivery')
         .where('tx.id = :id', { id: input.id })
@@ -122,11 +136,11 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
         };
       }
 
-      const product = await productRepo.findOne({
-        where: { id: entity.product.id },
-        lock: { mode: 'pessimistic_write' },
+      const items = await itemRepo.find({
+        where: { transaction: { id: entity.id } },
+        relations: ['product'],
       });
-      if (!product || product.stockUnits < input.quantity) {
+      if (items.length === 0) {
         return {
           transaction: TransactionMapper.toDomain(entity),
           stockAdjusted: false,
@@ -134,11 +148,47 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
         };
       }
 
-      product.stockUnits -= input.quantity;
+      const productMap = new Map<
+        string,
+        { entity: ProductEntity; quantity: number }
+      >();
+      for (const item of items) {
+        const productId = item.product.id;
+        const existing = productMap.get(productId);
+        if (existing) {
+          existing.quantity += item.quantity;
+          continue;
+        }
+        const product = await productRepo.findOne({
+          where: { id: productId },
+          lock: { mode: 'pessimistic_write' },
+        });
+        if (!product || product.stockUnits < item.quantity) {
+          return {
+            transaction: TransactionMapper.toDomain(entity),
+            stockAdjusted: false,
+            outcome: 'INSUFFICIENT_STOCK',
+          };
+        }
+        productMap.set(productId, { entity: product, quantity: item.quantity });
+      }
+
+      for (const [_, entry] of productMap) {
+        if (entry.entity.stockUnits < entry.quantity) {
+          return {
+            transaction: TransactionMapper.toDomain(entity),
+            stockAdjusted: false,
+            outcome: 'INSUFFICIENT_STOCK',
+          };
+        }
+        entry.entity.stockUnits -= entry.quantity;
+        await productRepo.save(entry.entity);
+      }
+
       entity.status = TransactionStatus.SUCCESS;
       entity.providerRef = input.providerRef;
       entity.failureReason = null;
-      await productRepo.save(product);
+      entity.cardLast4 = input.cardLast4;
       const saved = await txRepo.save(entity);
 
       return {

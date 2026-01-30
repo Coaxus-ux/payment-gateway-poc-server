@@ -3,6 +3,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { CustomerEntity } from './entities/customer.entity';
 import { DeliveryEntity } from './entities/delivery.entity';
 import { ProductEntity } from './entities/product.entity';
+import { TransactionItemEntity } from './entities/transaction-item.entity';
 import { TransactionEntity } from './entities/transaction.entity';
 
 export const typeOrmConfig = (
@@ -14,6 +15,12 @@ export const typeOrmConfig = (
   username: configService.get<string>('POSTGRES_USER'),
   password: configService.get<string>('POSTGRES_PASSWORD'),
   database: configService.get<string>('POSTGRES_DB'),
-  entities: [ProductEntity, CustomerEntity, DeliveryEntity, TransactionEntity],
+  entities: [
+    ProductEntity,
+    CustomerEntity,
+    DeliveryEntity,
+    TransactionEntity,
+    TransactionItemEntity,
+  ],
   synchronize: false,
 });

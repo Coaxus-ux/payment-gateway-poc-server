@@ -10,6 +10,7 @@ import { CustomerEntity } from '@/infrastructure/database/entities/customer.enti
 import { DeliveryEntity } from '@/infrastructure/database/entities/delivery.entity';
 import { ProductEntity } from '@/infrastructure/database/entities/product.entity';
 import { TransactionEntity } from '@/infrastructure/database/entities/transaction.entity';
+import { TransactionItemEntity } from '@/infrastructure/database/entities/transaction-item.entity';
 import { CustomerMapper } from '@/infrastructure/database/mappers/customer.mapper';
 import { DeliveryMapper } from '@/infrastructure/database/mappers/delivery.mapper';
 import { TransactionMapper } from '@/infrastructure/database/mappers/transaction.mapper';
@@ -27,6 +28,7 @@ export class CheckoutRepositoryTypeOrm implements CheckoutRepository {
       const customerRepo = manager.getRepository(CustomerEntity);
       const deliveryRepo = manager.getRepository(DeliveryEntity);
       const transactionRepo = manager.getRepository(TransactionEntity);
+      const itemRepo = manager.getRepository(TransactionItemEntity);
 
       let customer = await customerRepo.findOne({
         where: { email: input.customer.email },
@@ -43,23 +45,29 @@ export class CheckoutRepositoryTypeOrm implements CheckoutRepository {
 
       const tx = new TransactionEntity();
       tx.id = input.transaction.id;
-      tx.product = { id: input.transaction.productId } as ProductEntity;
       tx.customer = customer;
       tx.delivery = savedDelivery;
       tx.status = TransactionStatus.PENDING;
       tx.amount = input.transaction.amount;
       tx.currency = input.transaction.currency;
-      tx.quantity = 1;
-      tx.productName = input.transaction.productSnapshot.name;
-      tx.productDescription = input.transaction.productSnapshot.description;
-      tx.productImageUrls = input.transaction.productSnapshot.imageUrls;
-      tx.productPriceAmount = input.transaction.productSnapshot.priceAmount;
-      tx.productCurrency = input.transaction.productSnapshot.currency;
+      tx.cardLast4 = null;
 
       const savedTx = await transactionRepo.save(tx);
+      const items = input.transaction.items.map((item) => {
+        const entity = new TransactionItemEntity();
+        entity.transaction = savedTx;
+        entity.product = { id: item.productId } as ProductEntity;
+        entity.quantity = item.quantity;
+        entity.unitPriceAmount = item.productSnapshot.priceAmount;
+        entity.currency = item.productSnapshot.currency;
+        entity.productSnapshot = item.productSnapshot;
+        return entity;
+      });
+      await itemRepo.save(items);
+
       const loaded = await transactionRepo.findOne({
         where: { id: savedTx.id },
-        relations: ['product', 'customer', 'delivery'],
+        relations: ['customer', 'delivery', 'items', 'items.product'],
       });
       if (!loaded) {
         throw new Error('Transaction not found after save');

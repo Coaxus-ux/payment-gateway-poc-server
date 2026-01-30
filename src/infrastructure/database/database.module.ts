@@ -8,6 +8,7 @@ import { TransactionRepositoryTypeOrm } from './repositories/transaction.reposit
 import { CustomerEntity } from './entities/customer.entity';
 import { DeliveryEntity } from './entities/delivery.entity';
 import { ProductEntity } from './entities/product.entity';
+import { TransactionItemEntity } from './entities/transaction-item.entity';
 import { TransactionEntity } from './entities/transaction.entity';
 import {
   CHECKOUT_REPOSITORY,
@@ -24,6 +25,7 @@ import {
       CustomerEntity,
       DeliveryEntity,
       TransactionEntity,
+      TransactionItemEntity,
     ]),
   ],
   providers: [

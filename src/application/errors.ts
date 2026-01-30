@@ -6,5 +6,6 @@ export type ApplicationError =
   | { type: 'DELIVERY_UPDATE_FORBIDDEN' }
   | { type: 'CUSTOMER_NOT_FOUND' }
   | { type: 'AMOUNT_MISMATCH' }
+  | { type: 'ITEMS_INVALID' }
   | { type: 'PAYMENT_FAILED'; reason: string }
   | { type: 'TRANSACTION_FINALIZED' };

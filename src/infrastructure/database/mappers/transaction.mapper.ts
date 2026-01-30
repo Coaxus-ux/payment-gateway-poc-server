@@ -5,19 +5,15 @@ export const TransactionMapper = {
   toDomain(entity: TransactionEntity): Transaction {
     return Transaction.restore({
       id: entity.id,
-      productId: entity.product.id,
       customerId: entity.customer.id,
       deliveryId: entity.delivery.id,
       amount: entity.amount,
       currency: entity.currency,
-      productSnapshot: {
-        id: entity.product.id,
-        name: entity.productName,
-        description: entity.productDescription,
-        imageUrls: entity.productImageUrls ?? [],
-        priceAmount: entity.productPriceAmount,
-        currency: entity.productCurrency,
-      },
+      items: (entity.items ?? []).map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        productSnapshot: item.productSnapshot,
+      })),
       status: entity.status,
       providerRef: entity.providerRef,
       failureReason: entity.failureReason,

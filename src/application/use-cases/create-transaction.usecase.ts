@@ -10,7 +10,11 @@ import { ProductRepository } from '@/application/ports/product-repository';
 import { CHECKOUT_REPOSITORY, PRODUCT_REPOSITORY } from '@/application/tokens';
 
 export type CreateTransactionInput = {
-  productId: string;
+  productId?: string;
+  items?: Array<{
+    productId: string;
+    quantity: number;
+  }>;
   amount: number;
   currency: string;
   customer: {
@@ -37,17 +41,75 @@ export class CreateTransactionUseCase {
   ) {}
 
   async execute(input: CreateTransactionInput) {
-    const product = await this.productRepository.findById(input.productId);
-    if (!product) {
-      return Result.err<ApplicationError>({ type: 'PRODUCT_NOT_FOUND' });
+    const rawItems =
+      input.items && input.items.length > 0
+        ? input.items
+        : input.productId
+          ? [{ productId: input.productId, quantity: 1 }]
+          : null;
+
+    if (!rawItems) {
+      return Result.err<ApplicationError>({ type: 'ITEMS_INVALID' });
     }
-    if (!product.stock.canDecrement(1)) {
-      return Result.err<ApplicationError>({ type: 'OUT_OF_STOCK' });
+
+    const itemOrder: string[] = [];
+    const itemQuantityMap = new Map<string, number>();
+    for (const item of rawItems) {
+      if (!item.productId || !Number.isInteger(item.quantity) || item.quantity < 1) {
+        return Result.err<ApplicationError>({ type: 'ITEMS_INVALID' });
+      }
+      if (!itemQuantityMap.has(item.productId)) {
+        itemOrder.push(item.productId);
+        itemQuantityMap.set(item.productId, 0);
+      }
+      itemQuantityMap.set(
+        item.productId,
+        (itemQuantityMap.get(item.productId) ?? 0) + item.quantity,
+      );
     }
-    if (
-      product.priceAmount !== input.amount ||
-      product.currency !== input.currency
-    ) {
+
+    const products = await Promise.all(
+      itemOrder.map((productId) => this.productRepository.findById(productId)),
+    );
+
+    const productMap = new Map<string, NonNullable<typeof products[number]>>();
+    products.forEach((product, idx) => {
+      const productId = itemOrder[idx];
+      if (product) {
+        productMap.set(productId, product);
+      }
+    });
+
+    for (const productId of itemOrder) {
+      const product = productMap.get(productId);
+      if (!product) {
+        return Result.err<ApplicationError>({ type: 'PRODUCT_NOT_FOUND' });
+      }
+      const quantity = itemQuantityMap.get(productId) ?? 0;
+      if (!product.stock.canDecrement(quantity)) {
+        return Result.err<ApplicationError>({ type: 'OUT_OF_STOCK' });
+      }
+      if (product.currency !== input.currency) {
+        return Result.err<ApplicationError>({ type: 'AMOUNT_MISMATCH' });
+      }
+    }
+
+    let computedTotal = 0;
+    const items = itemOrder.map((productId) => {
+      const product = productMap.get(productId);
+      if (!product) {
+        throw new Error('Missing product during transaction build');
+      }
+      const quantity = itemQuantityMap.get(productId) ?? 0;
+      computedTotal += product.priceAmount * quantity;
+      return {
+        productId: product.id,
+        quantity,
+        productSnapshot: product.snapshot(),
+      };
+    });
+
+    if (computedTotal !== input.amount) {
       return Result.err<ApplicationError>({ type: 'AMOUNT_MISMATCH' });
     }
 
@@ -75,12 +137,11 @@ export class CreateTransactionUseCase {
 
     const transactionResult = Transaction.create({
       id: randomUUID(),
-      productId: product.id,
       customerId: customerResult.value.id,
       deliveryId: deliveryResult.value.id,
       amount: input.amount,
       currency: input.currency,
-      productSnapshot: product.snapshot(),
+      items,
     });
     if (!transactionResult.ok) {
       return Result.err<ApplicationError>({ type: 'TRANSACTION_NOT_FOUND' });

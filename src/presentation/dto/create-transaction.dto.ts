@@ -8,6 +8,7 @@ import {
   Min,
   ValidateNested,
   IsUUID,
+  IsArray,
 } from 'class-validator';
 
 class CustomerDto {
@@ -45,9 +46,25 @@ class DeliveryDto {
   postalCode?: string;
 }
 
-export class CreateTransactionDto {
+class TransactionItemDto {
   @IsUUID()
   productId!: string;
+
+  @IsInt()
+  @Min(1)
+  quantity!: number;
+}
+
+export class CreateTransactionDto {
+  @IsOptional()
+  @IsUUID()
+  productId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TransactionItemDto)
+  items?: TransactionItemDto[];
 
   @IsInt()
   @Min(1)

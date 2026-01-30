@@ -71,6 +71,29 @@ export class PaymentGatewayProvider implements PaymentProvider {
     );
   }
 
+  private extractProviderError(error: any): string {
+    const messages = error?.response?.data?.error?.messages;
+    if (messages && typeof messages === 'object') {
+      const flattened = Object.entries(messages).flatMap(([field, value]) => {
+        if (Array.isArray(value)) {
+          return value.map((msg) => `${field}: ${String(msg)}`);
+        }
+        if (typeof value === 'string') {
+          return [`${field}: ${value}`];
+        }
+        return [];
+      });
+      if (flattened.length > 0) {
+        return flattened.join('; ');
+      }
+    }
+    const fallback =
+      error?.response?.data?.error?.message ??
+      error?.response?.data?.error?.type ??
+      error?.message;
+    return String(fallback ?? 'PAYMENT_PROVIDER_ERROR');
+  }
+
   private async getAcceptanceTokens(
     forceRefresh = false,
   ): Promise<AcceptanceTokens> {
@@ -113,22 +136,32 @@ export class PaymentGatewayProvider implements PaymentProvider {
     const publicKey = process.env.PAYMENT_PUBLIC_KEY ?? '';
     const privateKey = process.env.PAYMENT_PRIVATE_KEY ?? '';
     const integrityKey = process.env.PAYMENT_INTEGRITY_KEY ?? '';
+    const amountInCents = input.amount * 100;
 
-    const cardTokenRes = await this.http.post(
-      '/v1/tokens/cards',
-      {
-        number: input.card.number,
-        exp_month: String(input.card.expMonth).padStart(2, '0'),
-        exp_year: String(input.card.expYear).slice(-2),
-        cvc: input.card.cvc,
-        card_holder: input.card.holderName ?? 'Card Holder',
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${publicKey}`,
+    let cardTokenRes;
+    try {
+      cardTokenRes = await this.http.post(
+        '/v1/tokens/cards',
+        {
+          number: input.card.number,
+          exp_month: String(input.card.expMonth).padStart(2, '0'),
+          exp_year: String(input.card.expYear).slice(-2),
+          cvc: input.card.cvc,
+          card_holder: input.card.holderName ?? 'Card Holder',
         },
-      },
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${publicKey}`,
+          },
+        },
+      );
+    } catch (error: any) {
+      return {
+        status: 'FAILED',
+        providerRef: '',
+        failureReason: this.extractProviderError(error),
+      };
+    }
 
     const cardToken: string | undefined = cardTokenRes.data?.data?.id;
     if (!cardToken) {
@@ -160,23 +193,35 @@ export class PaymentGatewayProvider implements PaymentProvider {
       const messages = error?.response?.data?.error?.messages ?? {};
       if (messages?.acceptance_token) {
         const refreshed = await this.getAcceptanceTokens(true);
-        paymentSourceRes = await this.http.post(
-          '/v1/payment_sources',
-          {
-            type: 'CARD',
-            token: cardToken,
-            customer_email: input.customerEmail,
-            acceptance_token: refreshed.acceptanceToken,
-            accept_personal_auth: refreshed.acceptPersonalAuth,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${privateKey}`,
+        try {
+          paymentSourceRes = await this.http.post(
+            '/v1/payment_sources',
+            {
+              type: 'CARD',
+              token: cardToken,
+              customer_email: input.customerEmail,
+              acceptance_token: refreshed.acceptanceToken,
+              accept_personal_auth: refreshed.acceptPersonalAuth,
             },
-          },
-        );
+            {
+              headers: {
+                Authorization: `Bearer ${privateKey}`,
+              },
+            },
+          );
+        } catch (refreshError: any) {
+          return {
+            status: 'FAILED',
+            providerRef: '',
+            failureReason: this.extractProviderError(refreshError),
+          };
+        }
       } else {
-        throw error;
+        return {
+          status: 'FAILED',
+          providerRef: '',
+          failureReason: this.extractProviderError(error),
+        };
       }
     }
 
@@ -194,31 +239,40 @@ export class PaymentGatewayProvider implements PaymentProvider {
     }
     const signature = createHash('sha256')
       .update(
-        `${input.reference}${input.amount}${input.currency}${integrityKey}`,
+        `${input.reference}${amountInCents}${input.currency}${integrityKey}`,
       )
       .digest('hex');
 
-    const transactionRes = await this.http.post(
-      '/v1/transactions',
-      {
-        amount_in_cents: input.amount,
-        currency: input.currency,
-        signature,
-        customer_email: input.customerEmail,
-        reference: input.reference,
-        payment_source_id: paymentSourceId,
-        payment_method: {
-          installments: 1,
+    let transactionRes;
+    try {
+      transactionRes = await this.http.post(
+        '/v1/transactions',
+        {
+          amount_in_cents: amountInCents,
+          currency: input.currency,
+          signature,
+          customer_email: input.customerEmail,
+          reference: input.reference,
+          payment_source_id: paymentSourceId,
+          payment_method: {
+            installments: 1,
+          },
+          acceptance_token: tokens.acceptanceToken,
+          accept_personal_auth: tokens.acceptPersonalAuth,
         },
-        acceptance_token: tokens.acceptanceToken,
-        accept_personal_auth: tokens.acceptPersonalAuth,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${privateKey}`,
+        {
+          headers: {
+            Authorization: `Bearer ${privateKey}`,
+          },
         },
-      },
-    );
+      );
+    } catch (error: any) {
+      return {
+        status: 'FAILED',
+        providerRef: '',
+        failureReason: this.extractProviderError(error),
+      };
+    }
 
     const status: string | undefined = transactionRes.data?.data?.status;
     const providerRef: string = (transactionRes.data?.data?.id as string) ?? '';

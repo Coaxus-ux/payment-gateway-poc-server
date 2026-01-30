@@ -59,12 +59,17 @@ export class PayTransactionUseCase {
       customerEmail: customer.email,
       reference: transaction.id,
     });
+    const cardLast4 =
+      input.card.number && input.card.number.length >= 4
+        ? input.card.number.slice(-4)
+        : null;
 
     if (payment.status === 'FAILED') {
       const updated = await this.transactionRepository.markFailedIfPending({
         id: transaction.id,
         reason: payment.failureReason ?? 'PAYMENT_FAILED',
         providerRef: payment.providerRef ?? null,
+        cardLast4,
       });
       if (!updated) {
         return Result.err<ApplicationError>({ type: 'TRANSACTION_NOT_FOUND' });
@@ -79,7 +84,7 @@ export class PayTransactionUseCase {
       await this.transactionRepository.markSuccessAndDecrementStock({
         id: transaction.id,
         providerRef: payment.providerRef,
-        quantity: 1,
+        cardLast4,
       });
 
     if (success.outcome === 'NOT_FOUND') {

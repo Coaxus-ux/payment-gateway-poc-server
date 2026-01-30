@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { CustomerEntity } from './entities/customer.entity';
 import { DeliveryEntity } from './entities/delivery.entity';
 import { ProductEntity } from './entities/product.entity';
+import { TransactionItemEntity } from './entities/transaction-item.entity';
 import { TransactionEntity } from './entities/transaction.entity';
 
 export const AppDataSource = new DataSource({
@@ -11,7 +12,16 @@ export const AppDataSource = new DataSource({
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  entities: [ProductEntity, CustomerEntity, DeliveryEntity, TransactionEntity],
-  migrations: ['dist/infrastructure/database/migrations/*.js'],
+  entities: [
+    ProductEntity,
+    CustomerEntity,
+    DeliveryEntity,
+    TransactionEntity,
+    TransactionItemEntity,
+  ],
+  migrations: [
+    'src/infrastructure/database/migrations/*.ts',
+    'dist/infrastructure/database/migrations/*.js',
+  ],
   logging: false,
 });

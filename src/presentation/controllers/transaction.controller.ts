@@ -21,6 +21,7 @@ export class TransactionController {
   async create(@Body() body: CreateTransactionDto) {
     const result = await this.createTransaction.execute({
       productId: body.productId,
+      items: body.items,
       amount: body.amount,
       currency: body.currency,
       customer: body.customer,

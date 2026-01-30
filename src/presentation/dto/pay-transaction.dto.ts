@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MinLength,
   Max,
   Min,
 } from 'class-validator';
@@ -31,5 +32,6 @@ export class PayTransactionDto {
 
   @IsOptional()
   @IsString()
+  @MinLength(5)
   holderName?: string;
 }

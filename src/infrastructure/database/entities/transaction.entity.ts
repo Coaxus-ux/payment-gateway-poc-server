@@ -1,25 +1,24 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
 import { TransactionStatus } from '@/domain/transaction/transaction-status';
 import { CustomerEntity } from './customer.entity';
 import { DeliveryEntity } from './delivery.entity';
-import { ProductEntity } from './product.entity';
+import { TransactionItemEntity } from './transaction-item.entity';
 
 @Entity({ name: 'transactions' })
 export class TransactionEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
-
-  @ManyToOne(() => ProductEntity)
-  @JoinColumn({ name: 'product_id' })
-  product!: ProductEntity;
 
   @ManyToOne(() => CustomerEntity)
   @JoinColumn({ name: 'customer_id' })
@@ -54,23 +53,19 @@ export class TransactionEntity {
   @Column({ type: 'varchar', length: 10 })
   currency!: string;
 
-  @Column({ type: 'integer' })
-  quantity!: number;
+  @Column({ name: 'card_last4', type: 'varchar', length: 4, nullable: true })
+  cardLast4!: string | null;
 
-  @Column({ name: 'product_name', type: 'varchar', length: 200 })
-  productName!: string;
+  @OneToMany(() => TransactionItemEntity, (item) => item.transaction, {
+    cascade: true,
+  })
+  items!: TransactionItemEntity[];
 
-  @Column({ name: 'product_description', type: 'text', nullable: true })
-  productDescription!: string | null;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt!: Date;
 
-  @Column({ name: 'product_image_urls', type: 'jsonb', nullable: true })
-  productImageUrls!: string[] | null;
-
-  @Column({ name: 'product_price_amount', type: 'integer' })
-  productPriceAmount!: number;
-
-  @Column({ name: 'product_currency', type: 'varchar', length: 10 })
-  productCurrency!: string;
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  updatedAt!: Date;
 
   @VersionColumn()
   version!: number;

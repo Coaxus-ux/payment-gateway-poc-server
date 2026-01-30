@@ -2,15 +2,20 @@ import { Result } from '@/shared/result';
 import { ProductSnapshot } from '@/domain/product/product';
 import { TransactionStatus } from './transaction-status';
 
+export type TransactionItem = {
+  productId: string;
+  quantity: number;
+  productSnapshot: ProductSnapshot;
+};
+
 export class Transaction {
   private constructor(
     readonly id: string,
-    readonly productId: string,
     readonly customerId: string,
     readonly deliveryId: string,
     readonly amount: number,
     readonly currency: string,
-    readonly productSnapshot: ProductSnapshot,
+    readonly items: TransactionItem[],
     readonly status: TransactionStatus,
     readonly providerRef: string | null,
     readonly failureReason: string | null,
@@ -18,33 +23,39 @@ export class Transaction {
 
   static create(props: {
     id: string;
-    productId: string;
     customerId: string;
     deliveryId: string;
     amount: number;
     currency: string;
-    productSnapshot: ProductSnapshot;
+    items: TransactionItem[];
   }) {
-    if (
-      !props.id ||
-      !props.productId ||
-      !props.customerId ||
-      !props.deliveryId
-    ) {
+    if (!props.id || !props.customerId || !props.deliveryId) {
       return Result.err('TRANSACTION_INVALID');
     }
     if (!Number.isInteger(props.amount) || props.amount <= 0) {
       return Result.err('TRANSACTION_AMOUNT_INVALID');
     }
+    if (!props.items || props.items.length === 0) {
+      return Result.err('TRANSACTION_ITEMS_INVALID');
+    }
+    if (
+      props.items.some(
+        (item) =>
+          !item.productId ||
+          !Number.isInteger(item.quantity) ||
+          item.quantity < 1,
+      )
+    ) {
+      return Result.err('TRANSACTION_ITEMS_INVALID');
+    }
     return Result.ok(
       new Transaction(
         props.id,
-        props.productId,
         props.customerId,
         props.deliveryId,
         props.amount,
         props.currency,
-        props.productSnapshot,
+        props.items,
         TransactionStatus.PENDING,
         null,
         null,
@@ -54,24 +65,22 @@ export class Transaction {
 
   static restore(props: {
     id: string;
-    productId: string;
     customerId: string;
     deliveryId: string;
     amount: number;
     currency: string;
-    productSnapshot: ProductSnapshot;
+    items: TransactionItem[];
     status: TransactionStatus;
     providerRef: string | null;
     failureReason: string | null;
   }) {
     return new Transaction(
       props.id,
-      props.productId,
       props.customerId,
       props.deliveryId,
       props.amount,
       props.currency,
-      props.productSnapshot,
+      props.items,
       props.status,
       props.providerRef,
       props.failureReason,
@@ -85,12 +94,11 @@ export class Transaction {
     return Result.ok(
       new Transaction(
         this.id,
-        this.productId,
         this.customerId,
         this.deliveryId,
         this.amount,
         this.currency,
-        this.productSnapshot,
+        this.items,
         TransactionStatus.SUCCESS,
         providerRef,
         null,
@@ -105,12 +113,11 @@ export class Transaction {
     return Result.ok(
       new Transaction(
         this.id,
-        this.productId,
         this.customerId,
         this.deliveryId,
         this.amount,
         this.currency,
-        this.productSnapshot,
+        this.items,
         TransactionStatus.FAILED,
         providerRef,
         reason,

@@ -7,18 +7,23 @@ describe('PayTransactionUseCase', () => {
   const baseTx = () => {
     const tx = Transaction.create({
       id: 'tx-1',
-      productId: 'prod-1',
       customerId: 'cust-1',
       deliveryId: 'del-1',
       amount: 1000,
       currency: 'COP',
-      productSnapshot: {
-        id: 'prod-1',
-        name: 'Test',
-        description: null,
-        priceAmount: 1000,
-        currency: 'COP',
-      },
+      items: [
+        {
+          productId: 'prod-1',
+          quantity: 1,
+          productSnapshot: {
+            id: 'prod-1',
+            name: 'Test',
+            description: null,
+            priceAmount: 1000,
+            currency: 'COP',
+          },
+        },
+      ],
     });
     if (!tx.ok) {
       throw new Error('invalid transaction');

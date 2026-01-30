@@ -18,6 +18,7 @@ export function mapErrorToHttp(error: ApplicationError): never {
     case 'DELIVERY_UPDATE_FORBIDDEN':
       throw new ForbiddenException({ error: error.type });
     case 'AMOUNT_MISMATCH':
+    case 'ITEMS_INVALID':
       throw new BadRequestException({ error: error.type });
     case 'PAYMENT_FAILED':
       throw new BadRequestException({
