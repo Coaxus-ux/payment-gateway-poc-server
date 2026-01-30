@@ -187,7 +187,11 @@ describe('CreateTransactionUseCase', () => {
   });
 
   it('rejects when currency mismatches across items', async () => {
-    const product = makeProduct({ id: 'prod-1', priceAmount: 1000, currency: 'USD' });
+    const product = makeProduct({
+      id: 'prod-1',
+      priceAmount: 1000,
+      currency: 'USD',
+    });
     const useCase = new CreateTransactionUseCase(
       {
         findById: () => Promise.resolve(product),
@@ -216,7 +220,11 @@ describe('CreateTransactionUseCase', () => {
   });
 
   it('aggregates duplicate items when calculating total', async () => {
-    const product = makeProduct({ id: 'prod-1', priceAmount: 1000, stockUnits: 5 });
+    const product = makeProduct({
+      id: 'prod-1',
+      priceAmount: 1000,
+      stockUnits: 5,
+    });
     let capturedQuantity = 0;
     const useCase = new CreateTransactionUseCase(
       {

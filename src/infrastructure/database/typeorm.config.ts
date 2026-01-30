@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { AdminUserEntity } from './entities/admin-user.entity';
 import { CustomerEntity } from './entities/customer.entity';
 import { DeliveryEntity } from './entities/delivery.entity';
 import { ProductEntity } from './entities/product.entity';
@@ -21,6 +22,7 @@ export const typeOrmConfig = (
     DeliveryEntity,
     TransactionEntity,
     TransactionItemEntity,
+    AdminUserEntity,
   ],
   synchronize: false,
 });

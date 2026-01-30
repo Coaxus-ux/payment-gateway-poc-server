@@ -63,9 +63,20 @@ export class InitSchema1769570400000 implements MigrationInterface {
         updated_at timestamptz NOT NULL DEFAULT now()
       )
     `);
+    await queryRunner.query(`
+      CREATE TABLE admin_users (
+        id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+        email varchar(200) NOT NULL UNIQUE,
+        full_name varchar(200) NOT NULL,
+        role varchar(20) NOT NULL DEFAULT 'ADMIN',
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      )
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('DROP TABLE IF EXISTS admin_users');
     await queryRunner.query('DROP TABLE IF EXISTS transaction_items');
     await queryRunner.query('DROP TABLE IF EXISTS transactions');
     await queryRunner.query('DROP TABLE IF EXISTS deliveries');

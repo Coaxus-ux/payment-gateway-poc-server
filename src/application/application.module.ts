@@ -3,9 +3,11 @@ import { DatabaseModule } from '@/infrastructure/database/database.module';
 import { PaymentModule } from '@/infrastructure/payment/payment.module';
 import { CreateTransactionUseCase } from './use-cases/create-transaction.usecase';
 import { GetCustomerUseCase } from './use-cases/get-customer.usecase';
+import { GetCustomerProfileUseCase } from './use-cases/get-customer-profile.usecase';
 import { GetDeliveryUseCase } from './use-cases/get-delivery.usecase';
 import { GetProductUseCase } from './use-cases/get-product.usecase';
 import { GetTransactionUseCase } from './use-cases/get-transaction.usecase';
+import { ListAdminTransactionsUseCase } from './use-cases/list-admin-transactions.usecase';
 import { ListProductsUseCase } from './use-cases/list-products.usecase';
 import { PayTransactionUseCase } from './use-cases/pay-transaction.usecase';
 import { UpdateDeliveryUseCase } from './use-cases/update-delivery.usecase';
@@ -19,8 +21,10 @@ import { UpdateDeliveryUseCase } from './use-cases/update-delivery.usecase';
     PayTransactionUseCase,
     GetTransactionUseCase,
     GetCustomerUseCase,
+    GetCustomerProfileUseCase,
     GetDeliveryUseCase,
     UpdateDeliveryUseCase,
+    ListAdminTransactionsUseCase,
   ],
   exports: [
     ListProductsUseCase,
@@ -29,8 +33,10 @@ import { UpdateDeliveryUseCase } from './use-cases/update-delivery.usecase';
     PayTransactionUseCase,
     GetTransactionUseCase,
     GetCustomerUseCase,
+    GetCustomerProfileUseCase,
     GetDeliveryUseCase,
     UpdateDeliveryUseCase,
+    ListAdminTransactionsUseCase,
   ],
 })
 export class ApplicationModule {}

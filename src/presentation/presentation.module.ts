@@ -5,6 +5,7 @@ import { DeliveryController } from './controllers/delivery.controller';
 import { HealthController } from './controllers/health.controller';
 import { ProductController } from './controllers/product.controller';
 import { TransactionController } from './controllers/transaction.controller';
+import { AdminController } from './controllers/admin.controller';
 
 @Module({
   imports: [ApplicationModule],
@@ -14,6 +15,7 @@ import { TransactionController } from './controllers/transaction.controller';
     CustomerController,
     DeliveryController,
     HealthController,
+    AdminController,
   ],
 })
 export class PresentationModule {}

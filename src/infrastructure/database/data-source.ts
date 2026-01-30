@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { AdminUserEntity } from './entities/admin-user.entity';
 import { CustomerEntity } from './entities/customer.entity';
 import { DeliveryEntity } from './entities/delivery.entity';
 import { ProductEntity } from './entities/product.entity';
@@ -18,6 +19,7 @@ export const AppDataSource = new DataSource({
     DeliveryEntity,
     TransactionEntity,
     TransactionItemEntity,
+    AdminUserEntity,
   ],
   migrations: [
     'src/infrastructure/database/migrations/*.ts',

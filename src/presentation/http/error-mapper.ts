@@ -27,6 +27,8 @@ export function mapErrorToHttp(error: ApplicationError): never {
       });
     case 'TRANSACTION_FINALIZED':
       throw new ConflictException({ error: error.type });
+    case 'ADMIN_UNAUTHORIZED':
+      throw new ForbiddenException({ error: error.type });
     default:
       throw new BadRequestException({ error: 'UNKNOWN_ERROR' });
   }

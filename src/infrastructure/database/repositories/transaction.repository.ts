@@ -28,6 +28,70 @@ export class TransactionRepositoryTypeOrm implements TransactionRepository {
     return entity ? TransactionMapper.toDomain(entity) : null;
   }
 
+  async listAll(input?: { limit?: number; offset?: number }) {
+    const limit = input?.limit ?? 50;
+    const offset = input?.offset ?? 0;
+    const [entities, total] = await this.repo.findAndCount({
+      order: { createdAt: 'DESC' },
+      take: limit,
+      skip: offset,
+      relations: ['customer', 'delivery', 'items', 'items.product'],
+    });
+
+    return {
+      total,
+      items: entities.map((entity) => ({
+        id: entity.id,
+        status: entity.status,
+        amount: entity.amount,
+        currency: entity.currency,
+        createdAt: entity.createdAt,
+        customer: {
+          id: entity.customer.id,
+          email: entity.customer.email,
+          fullName: entity.customer.fullName,
+          phone: entity.customer.phone,
+        },
+        delivery: {
+          id: entity.delivery.id,
+          addressLine1: entity.delivery.addressLine1,
+          addressLine2: entity.delivery.addressLine2,
+          city: entity.delivery.city,
+          country: entity.delivery.country,
+          postalCode: entity.delivery.postalCode,
+        },
+        items: (entity.items ?? []).map((item) => ({
+          id: item.id,
+          productId: item.product.id,
+          quantity: item.quantity,
+          unitPriceAmount: item.unitPriceAmount,
+          currency: item.currency,
+          productSnapshot: item.productSnapshot,
+        })),
+      })),
+    };
+  }
+
+  async findLatestByCustomerId(customerId: string) {
+    const entity = await this.repo.findOne({
+      where: { customer: { id: customerId } },
+      order: { createdAt: 'DESC' },
+      relations: ['delivery'],
+    });
+    if (!entity) return null;
+    return {
+      transactionId: entity.id,
+      delivery: {
+        id: entity.delivery.id,
+        addressLine1: entity.delivery.addressLine1,
+        addressLine2: entity.delivery.addressLine2,
+        city: entity.delivery.city,
+        country: entity.delivery.country,
+        postalCode: entity.delivery.postalCode,
+      },
+    };
+  }
+
   async create(transaction: Transaction): Promise<Transaction> {
     return this.dataSource.transaction(async (manager) => {
       const transactionRepo = manager.getRepository(TransactionEntity);

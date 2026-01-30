@@ -8,4 +8,5 @@ export type ApplicationError =
   | { type: 'AMOUNT_MISMATCH' }
   | { type: 'ITEMS_INVALID' }
   | { type: 'PAYMENT_FAILED'; reason: string }
-  | { type: 'TRANSACTION_FINALIZED' };
+  | { type: 'TRANSACTION_FINALIZED' }
+  | { type: 'ADMIN_UNAUTHORIZED' };
